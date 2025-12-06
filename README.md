@@ -40,12 +40,12 @@
 
 ```bash
 # .env 文件内容 (请修改为真实值)
-CORP_ID=ww49d7776235xxxxxx
+CORP_ID=ww49xxxxxxxxxxx
 AGENT_ID=1000002
-SECRET=e5Nly7h_C_yl8lzw-poNTYNVpSx3f98b7OJztxxxxxx
+SECRET=e5Nly7h_C_yl8lzw-poNTxxxxxxxxxxxxxxx
 
-# 自定义鉴权密钥 (调用接口时需带上 ?key=hexin123)
-PUSH_KEY=hexin123
+# 自定义鉴权密钥 (调用接口时需带上 ?key=您的密钥)
+PUSH_KEY=自定义密钥
 
 # 服务监听端口 (容器内部)
 PORT=10008
