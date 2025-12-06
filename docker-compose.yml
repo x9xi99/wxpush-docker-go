@@ -1,0 +1,14 @@
+version: '3'
+services:
+  wxpush:
+    build: .
+    image: wxpush-server
+    container_name: wxpush
+    restart: always
+    # 端口映射
+    ports:
+      # 左边是外部访问端口，右边是容器内部端口
+      - "10001:10001"
+    # 读取同级目录下的 .env 文件
+    env_file:
+      - .env
