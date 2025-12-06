@@ -52,3 +52,26 @@ PORT=10008
 
 # 时区
 TZ=Asia/Shanghai
+
+###2. 启动容器
+运行以下命令即可（假设你想映射到服务器的 10008 端口）：
+docker run -d \
+  --name wxpush \
+  --restart always \
+  -p 10008:10008 \
+  --env-file .env \
+  ghcr.io/x9xi99/wxpush-docker-go:latest
+
+## 📂 部署方式 2：Docker Compose
+如果你喜欢用 Compose 管理，创建一个 docker-compose.yml：
+version: '3'
+services:
+  wxpush:
+    image: ghcr.io/x9xi99/wxpush-docker-go:latest
+    container_name: wxpush
+    restart: always
+    ports:
+      - "10008:10008"
+    env_file:
+      - .env
+
