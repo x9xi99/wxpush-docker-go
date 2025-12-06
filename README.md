@@ -39,31 +39,40 @@
 在服务器上创建一个 `.env` 文件，填入你的配置：
 
 ```bash
-# .env 文件内容
+# .env 文件内容 (请修改为真实值)
 CORP_ID=ww49d7776235xxxxxx
 AGENT_ID=1000002
 SECRET=e5Nly7h_C_yl8lzw-poNTYNVpSx3f98b7OJztxxxxxx
 
-# 自定义鉴权密钥 (调用接口时需带上 ?key=密钥)
-PUSH_KEY=您的自定义密钥
+# 自定义鉴权密钥 (调用接口时需带上 ?key=hexin123)
+PUSH_KEY=hexin123
 
 # 服务监听端口 (容器内部)
 PORT=10008
 
 # 时区
 TZ=Asia/Shanghai
+```
 
-###2. 启动容器
-运行以下命令即可（假设你想映射到服务器的 10008 端口）：
+### 2. 启动容器
+运行以下命令即可（映射到服务器的 10008 端口）：
+
+```bash
 docker run -d \
   --name wxpush \
   --restart always \
   -p 10008:10008 \
   --env-file .env \
   ghcr.io/x9xi99/wxpush-docker-go:latest
+```
+
+---
 
 ## 📂 部署方式 2：Docker Compose
-如果你喜欢用 Compose 管理，创建一个 docker-compose.yml：
+
+如果你喜欢用 Compose 管理，创建一个 `docker-compose.yml`：
+
+```yaml
 version: '3'
 services:
   wxpush:
@@ -74,4 +83,106 @@ services:
       - "10008:10008"
     env_file:
       - .env
+```
 
+然后运行：
+```bash
+docker-compose up -d
+```
+
+---
+
+## ☁️ 部署方式 3：云平台 (Koyeb 等)
+
+本项目完美支持无服务器（Serverless/PaaS）平台部署。
+
+1. **镜像地址**: `ghcr.io/x9xi99/wxpush-docker-go:latest`
+2. **端口设置**: 在平台设置中暴露端口 `10008`。
+3. **环境变量**: 在平台的 Settings -> Environment Variables 中添加 `CORP_ID`, `SECRET` 等变量（无需创建 .env 文件）。
+
+---
+
+## 🔌 API 使用说明
+
+- **接口地址**: `http://你的IP:10008/send?key=你的PUSH_KEY`
+- **请求方式**: `POST`
+- **Content-Type**: `application/json`
+
+### 1. 发送纯文本 (Text)
+支持简写模式，直接传 `content` 即可。
+
+```bash
+curl -X POST "http://127.0.0.1:10008/send?key=hexin123" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "msgtype": "text",
+       "content": "服务器 SSH 登录警告！\n来源IP: 192.168.1.100"
+     }'
+```
+
+### 2. 发送 Markdown
+```bash
+curl -X POST "http://127.0.0.1:10008/send?key=hexin123" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "msgtype": "markdown",
+       "markdown": {
+         "content": "# 每日监控\n> CPU: <font color=\"warning\">80%</font>\n> 内存: <font color=\"info\">Normal</font>"
+       }
+     }'
+```
+
+### 3. 发送文本卡片 (TextCard)
+适合做漂亮的通知跳转。
+
+```bash
+curl -X POST "http://127.0.0.1:10008/send?key=hexin123" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "msgtype": "textcard",
+       "textcard": {
+         "title": "GitHub Actions 构建成功",
+         "description": "<div class=\"gray\">2025-12-06</div> <br>项目 wxpush-docker-go 构建完成。",
+         "url": "https://github.com/x9xi99",
+         "btntxt": "查看详情"
+       }
+     }'
+```
+
+### 4. 高级用法 (透传模式)
+本服务支持企业微信的所有消息格式。你只需要参考 [企业微信官方文档 - 发送消息](https://developer.work.weixin.qq.com/document/path/90236)，构建对应的 JSON 结构即可。
+
+例如发送图片：
+```json
+{
+  "msgtype": "image",
+  "image": {
+    "media_id": "MEDIA_ID_xxxx"
+  },
+  "touser": "@all"
+}
+```
+
+---
+
+## ⚙️ 环境变量详解
+
+| 变量名 | 必填 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `CORP_ID` | ✅ | - | 企业微信 CorpID |
+| `AGENT_ID` | ✅ | - | 企业微信应用 AgentID |
+| `SECRET` | ✅ | - | 企业微信应用 Secret |
+| `PUSH_KEY` | ✅ | - | 自定义鉴权密钥，防止未授权调用 |
+| `PORT` | ❌ | `10001` | 服务监听端口 (建议改为 10008) |
+| `TZ` | ❌ | `Asia/Shanghai` | 容器时区设置 |
+
+---
+
+## 🛡️ 安全提示
+
+1. **不要上传 .env 文件**：请确保 `.env` 文件被包含在 `.gitignore` 中，绝对不要提交到 GitHub 公开仓库。
+2. **保护 PUSH_KEY**：`PUSH_KEY` 是你的 API 密码，请设置复杂一点，并不要泄露给他人。
+
+## 📝 License
+
+MIT License.
