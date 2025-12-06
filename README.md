@@ -64,7 +64,7 @@ SECRET=e5Nly7h_C_yl8lzw-poNTYNVpSx3f98b7OJztxxxxxx
 PUSH_KEY=您的密钥
 
 # --- 服务配置 ---
-# 容器内部监听端口 (建议保持与外部映射一致)
+# 容器内部监听端口 (建议保持与外部映射一致)默认PORT=10001，如不需要自定义可以注释掉此项
 PORT=10008
 # 时区设置 (保证日志时间正确)
 TZ=Asia/Shanghai
@@ -73,6 +73,7 @@ TZ=Asia/Shanghai
 
 ### 3. 一键启动
 确保你仍然在 `wxpush` 目录下，运行以下命令：
+这里自定义端口-p参数10008:10008，默认就应该为10001:10001
 
 ```bash
 docker run -d \
