@@ -135,7 +135,7 @@ docker-compose up -d
 支持简写模式，直接传 `content` 即可。
 
 ```bash
-curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/send?key=hexin123)" \
+curl -X POST "[http://127.0.0.1:10008/send?key=你的PUSH_KEY](http://127.0.0.1:10008/send?key=你的PUSH_KEY)" \
      -H "Content-Type: application/json" \
      -d '{
        "msgtype": "text",
@@ -147,7 +147,7 @@ curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/
 Markdown 支持颜色高亮，适合做监控告警。
 
 ```bash
-curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/send?key=hexin123)" \
+curl -X POST "[http://127.0.0.1:10008/send?key=你的PUSH_KEY](http://127.0.0.1:10008/send?key=你的PUSH_KEY)" \
      -H "Content-Type: application/json" \
      -d '{
        "msgtype": "markdown",
@@ -161,7 +161,7 @@ curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/
 适合做漂亮的通知跳转。
 
 ```bash
-curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/send?key=hexin123)" \
+curl -X POST "[http://127.0.0.1:10008/send?key=你的PUSH_KEY](http://127.0.0.1:10008/send?key=你的PUSH_KEY)" \
      -H "Content-Type: application/json" \
      -d '{
        "msgtype": "textcard",
@@ -196,7 +196,7 @@ curl -X POST "[http://127.0.0.1:10008/send?key=hexin123](http://127.0.0.1:10008/
 | `CORP_ID` | ✅ | `ww49...` | 企业微信 CorpID |
 | `AGENT_ID` | ✅ | `1000002` | 企业微信应用 AgentID |
 | `SECRET` | ✅ | `e5Nl...` | 企业微信应用 Secret |
-| `PUSH_KEY` | ✅ | `hexin123` | **自定义鉴权密钥**，防止接口被他人滥用 |
+| `PUSH_KEY` | ✅ | `你的PUSH_KEY` | **自定义鉴权密钥**，防止接口被他人滥用 |
 | `PORT` | ❌ | `10008` | 容器内部监听端口，默认为 10001 |
 | `TZ` | ❌ | `Asia/Shanghai` | 容器时区，建议设置以保证日志时间正确 |
 
