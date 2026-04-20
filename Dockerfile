@@ -1,5 +1,4 @@
 # --- 阶段 1: 编译阶段 ---
-# 使用 --platform=$BUILDPLATFORM 强制在 GitHub 原生 x86 环境下运行编译器，避免模拟运行导致的极慢速度
 FROM --platform=$BUILDPLATFORM golang:1.21-alpine AS builder
 
 # 声明 Buildx 自动注入的变量
@@ -8,23 +7,30 @@ ARG TARGETARCH
 ARG TARGETVARIANT
 
 WORKDIR /app
-COPY . .
 
-# 关键改动：
-# 1. CGO_ENABLED=0 确保静态链接（跨平台运行不报错）
-# 2. 动态获取 GOARM（针对 arm/v7）
+# 拷贝源代码
+COPY main.go .
+
+# 解决 "cannot find main module" 报错：
+# 1. 如果你没有 go.mod，直接编译 main.go 即可
+# 2. CGO_ENABLED=0 确保静态链接
+# 3. 针对 arm/v7 动态获取 GOARM 版本
 RUN if [ "$TARGETARCH" = "arm" ]; then \
       export GOARM=$(echo $TARGETVARIANT | cut -c 2); \
     fi; \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
-    go build -ldflags="-s -w" -o server .
+    go build -ldflags="-s -w" -o server main.go
 
 # --- 阶段 2: 运行阶段 ---
 FROM alpine:latest
-# 安装基础证书和时区（对于微信推送等 HTTPS 请求是必须的）
+# 安装 HTTPS 请求所需的证书和时区数据
 RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /root/
-# 仅从编译阶段拷贝最终产物
+# 从编译阶段拷贝最终产物
 COPY --from=builder /app/server .
+
+# 暴露程序端口
 EXPOSE 10001
+
+# 启动程序
 CMD ["./server"]
